@@ -12,3 +12,28 @@ Name	标签的名字，<p>..</p>的名字是'p',格式：<tag>.name
 Attributes	标签的属性，字典形式组织，格式<tag>.attrs
 NavigableString	标签内非属性字符串，<>...</>中字符串，格式：<tag>.string
 Comment	标签内字符串的注释部分，一种特殊的Comment类型
+
+例子
+r = requests.get("http://python123.io/ws/demo.html")
+demo = r.text
+soup = BeautifulSoup(demo, "html.parser")
+soup.title
+soup.a
+soup.a.string
+
+标签树的下行遍历
+.contents	子节点的列表，将<tag>所有儿子节点存入列表中
+.children	子节点的迭代类型，与.contents类型，用于循环遍历子节点
+.descendants	子孙节点的迭代类型，包含所有子孙节点，用于循环遍历
+
+标签树的上行遍历
+.parent	节点的父亲标签
+.parents	节点先辈标签的迭代类型，用于循环遍历先辈节点
+
+标签树的平行遍历
+.next_sibling	返回按照HTML文本顺序的下一个平行节点标签
+.previous_sibling	返回按照HTML文本顺序的上一个平行节点标签
+.next_siblings	迭代类型，返回按照HTML文本顺序的后续所有平行节点标签
+.previous_siblings	迭代类型，返回按照HTML文本顺序的前续所有平行节点标签
+
+平行遍历发生在同一个父节点下的各节点间
