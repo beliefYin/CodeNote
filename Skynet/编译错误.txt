@@ -1,0 +1,9 @@
+问题：readline/readline.h:没有那个文件或目录
+
+解决方案：
+Centos系统：yum install libtermcap-devel ncurses-devel libevent-devel readline-devel
+
+Ubuntu系统:sudo apt-get install libreadline-dev
+
+问题：./3rd/lua/lua examples/client.lua运行不了
+解决方案：到./3rd/lua目录下$ make linux
