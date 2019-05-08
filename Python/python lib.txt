@@ -1,0 +1,5 @@
+passlib  密码散列库   文档：https://passlib.readthedocs.io/en/stable/index.html
+
+psycopg2  Psycopg是PostgreSQL数据库适配器
+
+flask  一个轻量级的WSGI web应用程序框架。
