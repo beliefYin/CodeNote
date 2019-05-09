@@ -1,0 +1,353 @@
+*安装pipenv
+$ pip install pipenv
+
+*pipenv操作
+$ pipenv install 创建虚拟环境，你可以通过--three和--two选项来声明虚拟环境中使用的Python版本（分别对应Python3和Python2），或是使用--python选项指定具体的版本号。同时要确保对应版本的Python已经安装在电脑中。
+$ pipenv shell 显式激活虚拟环境，exit退出虚拟环境
+$ pipenv run 不显式激活虚拟环境即可在当前项目的虚拟环境中执行命令，如pipenv run python hello.py
+$ pipenv update 更新版本
+
+*Pipfile和Pipfile.lock
+在创建虚拟环境时，如果项目根目录下没有Pipfile文件，pipenv install命令还会在项目文件夹根目录下创建Pipfile和Pipfile.lock文件，
+前者用来记录项目依赖包列表，而后者记录了固定版本的详细依赖包列表。当我们使用Pipenv安装/删除/更新依赖包时，Pipfile以及Pipfile.lock会自动更新。
+
+*安装Flask
+$ pipenv install flask
+
+*更新Flask
+$ pipenv update flask
+
+*创建程序实例
+```
+from flask import Flask
+app = Flask(__name__)
+```
+
+*注册路由
+```
+@app.route('/') 
+def index(): 
+	return '<h1>Hello, World!</h1>'
+```
+
+*绑定多个URL到同一视图函数
+```
+@app.route('/hi') 
+@app.route('/hello') 
+def say_hello(): 
+	return '<h1>Hello, Flask!</h1>'
+```
+
+*动态URL
+在URL规则中添加变量部分，使用“<变量名>”的形式表示。
+```
+@app.route('/greet/<name>') 
+def greet(name): 
+	return '<h1>Hello, %s!</h1>' % name
+```
+
+当URL规则中包含变量时，如果用户访问的URL中没有添加变量，比如/greet，那么Flask在匹配失败后会返回一个404错误响应。
+一个很常见的行为是在app.route（）装饰器里使用defaults参数设置URL变量的默认值，这个参数接收字典作为输入，
+存储URL变量和默认值的映射。在下面的代码中，我们为greet视图新添加了一个app.route（）装饰器，为/greet设置了默认的name值：
+```
+@app.route('/greet', defaults={'name': 'Programmer'}) 
+@app.route('/greet/<name>') 
+def greet(name): 
+	return '<h1>Hello, %s!</h1>' % name
+```
+
+上面的用法实际效果等同于：
+```
+@app.route('/greet') 
+@app.route('/greet/<name>') 
+def greet(name='Programmer'): 
+	return '<h1>Hello, %s!</h1>' % name
+```
+
+*运行
+$ flask run 
+在虚拟环境下要用$ pipenv run flask run
+
+*自动发现程序实现
+·从当前目录寻找app.py和wsgi.py模块，并从中寻找名为app或application的程序实例。
+·从环境变量FLASK_APP对应的值寻找名为app或application的程序实例。
+如果主模块名字为hello.py，那么要设置环境变量FLASK_APP
+Linux或macOS里：
+$ export FLASK_APP=hello 
+Windows里：
+> set FLASK_APP=hello
+
+*管理环境变量
+Flask的自动发现程序实例机制还有第三条规则：
+如果安装了python-dotenv，那么在使用flask run或其他命令时会使用它自动从.flaskenv文件和.env文件中加载环境变量。
+当安装了python-dotenv时，Flask在加载环境变量的优先级是：手动设置的环境变量>.env中设置的环境变量>.flaskenv设置的环境变量。
+
+*安装python-dotenv
+$ pipenv install python-dotenv
+
+*.env和.flaskenv
+我们在项目根目录下分别创建两个文件：.env和.flaskenv。
+.flaskenv用来存储和Flask相关的公开环境变量，比如FLASK_APP；
+.env用来存储包含敏感信息的环境变量，比如Email服务器的账户名与密码。
+
+*使服务器外部可见
+$ flask run --host=0.0.0.0
+
+*改变默认端口
+$ flask run --port=8000
+
+*Watchdog
+一个用于监测文件变动的Python库
+$ pipenv install watchdog --dev
+因为这个包只在开发时才会用到，所以我们在安装命令后添加了一个--dev选项，这用来把这个包声明为开发依赖。
+
+*Python Shell
+在开发Flask程序时，我们并不会直接使用python命令启动Python Shell，而是使用flask shell命令：
+$ flask shell
+Python Shell可以执行exit（）或quit（）退出，在Windows系统上可以使用Crtl+Z并按Enter退出；
+在Linux和macOS则可以使用Crtl+D退出。
+使用flask shell命令打开的Python Shell自动包含程序上下文，并且已经导入了app实例
+
+*项目配置
+Flask对象的app.config属性作为统一的接口来设置和获取，它指向的Config类实际上是字典的子类，所以你可以像操作其他字典一样操作它。
+app.config['ADMIN_NAME'] = 'Peter'
+value = app.config['ADMIN_NAME']
+使用update（）方法则可以一次加载多个值：
+app.config.update( TESTING=True, SECRET_KEY='_5#yF4Q8z\n\xec]/' )
+注意：配置的名称必须是全大写形式，小写的变量将不会被读取。
+
+*URL与端点
+比如，下面的视图函数：
+```
+@app.route('/') 
+def index(): 
+	return 'Hello Flask!'
+```
+这时候flask.url_for('index')可获得'/'
+
+如果URL含有动态部分，那么我们需要在url_for（）函数里传入相应的参数，以下面的视图函数为例：
+```
+@app.route('/hello/<name>') 
+def greet(name):
+	return 'Hello %s!' % name
+```
+这时候flask.url_for('greet'，name='Jack')得到的URL为“/hello/Jack”。
+
+提示
+我们使用url_for（）函数生成的URL是相对URL（即内部URL），即URL中的path部分，比如“/hello”，不包含根URL。
+相对URL只能在程序内部使用。如果你想要生成供外部使用的绝对URL，可以在使用url_for()函数时，
+将_external参数设为True，这会生成完整的URL，比如http://helloflask.com/hello，
+在本地运行程序时则会获得http://localhost:5000/hello。
+
+*定义Flask命令
+通过创建任意一个函数，并为其添加app.cli.command()装饰器，我们就可以注册一个flask命令。
+```
+@app.cli.command() 
+def hello(): 
+	"""Just say hello."""  #这一句是用来输出在帮助文档里的
+	click.echo('Hello, Human!')
+```
+
+函数的名称即为命令名称，这里注册的命令即hello，你可以使用flask hello命令来触发函数，如下：
+$ flask hello Hello, Human!
+作为替代，你也可以在app.cli.command()装饰器中传入参数来设置命令名称，
+比如app.cli.command('say-hello')会把命令名称设置为say-hello，完整的命令即flask say-hello。
+
+*帮助文档
+$ flask --help 
+
+*Request对象
+
+*使用request的属性获取请求URL
+http://helloflask.com/hello?name=Grey
+path    u'/hello'
+full_path  u'/hello?name=Grey'
+host    u'helloflask.com'
+host_url    u'http://helloflask.com/'
+base_url   u'http://helloflask.com/hello'
+url    u'http://helloflask.com/hello?name=Grey'
+url_root  u'http://helloflask.com/'
+
+*request对象常用的属性和方法
+args  Werkzeug的ImmutableMultiDict对象。存储解析后的查询字符串，可通过字典方式获取键值。
+query_string  未解析的原生查询字符串
+blueprint  当前蓝本的名字
+cookies   一个包含所有随请求提交的cookies的字典
+data    包含字符串形式的请求数据
+endpoint    与当前请求相匹配的端点值
+files    Werkzeug的MultiDict对象，包含所有上传文件，可以使用字典的形式获取文件。使用的键为文件input标签中的name属性值，对应的值为Werkzeug的FileStorage对象，可以调用save()方法并传入保存路径来保存文件
+form    Werkzeug的ImmutableMultiDict对象。与files类似，包含解析后的表单数据。表单字段值通过input标签的name属性值作为键获取
+values    Werkzeug的CombinedMultiDict对象，结合了args和form属性的值
+get_data(cache=True, as_text=False, parse_from_data=False)    获取请求中的数据，默认读取为字节字符串(bytestring)，将as_text设为True则返回值将是解码后的unicode字符串
+get_json(self, force=False,silent=False,cache=True)作为JSON解析并返回数据，如果MIME类型不是JSON，返回None（除非force设为True）；解析出错则抛出Werkzeug提供的BadRequest异常（如果未开启调试模式，则返回400错误响应），如果silent设为True则返回None；cache设置是否缓存解析后的JSON数据
+headers    一个Werkzeug的EnvironHeaders对象，包含首部字段，可以以字典的形式操作
+is_json    通过MIME类型判断是否为JSON数据，返回布尔值
+json    包含解析后的JSON数据，内部调用get_json()，可通过字典的方式获取键值
+method    请求的HTTP方法
+referrer    请求发起的源URL，即referer
+user_agent    用户代理（User Agent，UA），包含用户的客户端类型，操作系统类型等信息
+
+
+*获取请求URL中的查询字符串
+* * *
+from flask import Flask, request 
+app = Flask(__name__) 
+@app.route('/hello') 
+def hello(): 
+	name = request.args.get('name', 'Flask') # 获取查询参数name的值 return '<h1>Hello, %s!<h1>' % name # 插入到返回值中
+* * *
+
+需要注意的是，和普通的字典类型不同，当我们从request对象的类型为MutliDict或ImmutableMultiDict的属性（比如files、form、args）
+中直接使用键作为索引获取数据时（比如request.args['name']），如果没有对应的键，
+那么会返回HTTP 400错误响应（Bad Request，表示请求无效），而不是抛出KeyError异常，如图2-4所示。为了避免这个错误，
+我们应该使用get（）方法获取数据，如果没有对应的值则返回None；get（）方法的第二个参数可以设置默认值，比如requset.args.get（'name'，'Human'）
+
+*查看程序中定义的所有路由
+$ flask routes
+等到的列表由app.url_map解析得到
+
+*设置监听的HTTP方法
+```
+@app.route('/hello', methods=['GET', 'POST']) 
+def hello(): 
+	return '<h1>Hello, Flask!</h1>'
+```
+
+*Flask内置的URL变量转换器
+string  不包含斜线的字符串（缺省值）
+int 整形
+float 浮点数
+path 包含斜线的字符串，static
+uuid 接受UUID字符串
+any 匹配一系列给定值中的一个元素   “<any（value1，value2，...）：变量名>”
+
+*any转换器
+```
+@app.route('/colors/<any(blue, white, red):color>') 
+def three_colors(color): 
+	return '<p>Love is patient and kind. Love is not jealous or boastful or proud or rude.</p>'
+```
+如果你想在any转换器中传入一个预先定义的列表，可以通过格式化字符串的方式（使用%或是format（）函数）来构建URL规则字符串，比如：
+```
+colors = ['blue', 'white', 'red'] 
+@app.route('/colors/<any(%s):color>' % str(colors)[1:-1]) 
+...
+```
+
+*请求钩子(Hook)
+有时我们需要对请求进行预处理（preprocessing）和后处理（postprocessing），这时可以使用Flask提供的一些请求钩子（Hook），它们可以用来注册在请求处理的不同阶段执行的处理函数（或称为回调函数，即Callback）
+before_first_request  注册一个函数，在处理第一个请求前运行
+before_request  注册一个函数，在处理每个请求前运行
+after_request 注册一个函数，如果没有未处理的异常抛出，会在每个请求结束后运行
+teardown_request 注册一个函数，即使有未处理的异常抛出，会在每个请求结束后运行。如果发生异常，会传入异常对象作为参数到注册的函数中
+after_this_request 在视图函数内注册一个函数，会在这个请求结束后运行
+```
+@app.before_request 
+def do_something(): 
+	pass # 这里的代码会在每个请求处理前执行
+```
+
+*在Flask中生成响应
+Flask会调用make_response（）方法将视图函数返回值转换为响应对象。
+完整地说，视图函数可以返回最多由三个元素组成的元组：响应主体、状态码、首部字段。其中首部字段可以为字典，或是两元素元组组成的列表。
+比如，普通的响应可以只包含主体内容：
+```
+@app.route('/hello') 
+def hello(): 
+	... 
+	return '<h1>Hello, Flask!</h1>'
+```
+
+默认的状态码为200，下面指定了不同的状态码：
+```
+@app.route('/hello') 
+	def hello(): ... return '<h1>Hello, Flask!</h1>', 201
+```
+
+有时你会想附加或修改某个首部字段。比如，要生成状态码为3XX的重定向响应，需要将首部中的Location字段设置为重定向的目标URL：
+```
+@app.route('/hello') 
+def hello(): 
+	... 
+	return '', 302, {'Location', 'http://www.example.com'}
+```
+
+*重定向
+如果你访问http://localhost:5000/hi，你会发现页面加载后地址栏中的URL变为了http://localhost:5000/hello。
+这种行为被称为重定向（Redirect），你可以理解为网页跳转。
+```
+from flask import Flask, redirect 
+@app.route('/hello') 
+def hello(): 
+	return redirect('http://www.example.com')
+```
+
+*重定向到其他视图
+```
+from flask import Flask, redirect, url_for
+@app.route('/hi') 
+def hi(): 
+	return redierct(url_for('hello')) # 重定向到/hello 
+
+@app.route('/hello') 
+def hello(): 
+	...
+```
+
+*错误响应
+返回404错误响应
+```
+from flask import Flask, abort 
+@app.route('/404') 
+def not_found(): 
+	abort(404)
+```
+
+注意：abort（）函数之后的代码将不会被执行。
+
+*MIME类型
+如果你想使用其他MIME类型，可以通过Flask提供的make_response（）方法生成响应对象，传入响应的主体作为参数，
+然后使用响应对象的mimetype属性设置MIME类型，比如：
+```
+from flask import make_response 
+@app.route('/foo') 
+def foo(): 
+	response = make_response('Hello, World!') 
+	response.mimetype = 'text/plain' 
+	return response
+```
+
+*Flask中json对象
+```
+from flask import Flask, make_response, json 
+@app.route('/foo') 
+def foo(): 
+	data = { 'name':'Grey Li', 'gender':'male' } 
+	response = make_response(json.dumps(data)) 
+	response.mimetype = 'application/json' 
+	return response
+```
+
+*jsonify
+不过我们一般并不直接使用json模块的dumps（）、load（）等方法，因为Flask通过包装这些方法提供了更方便的jsonify（）函数。
+借助jsonify（）函数，我们仅需要传入数据或参数，它会对我们传入的参数进行序列化，转换成JSON字符串作为响应的主体，然后生成一个响应对象，
+并且设置正确的MIME类型。使用jsonify函数可以将前面的例子简化为这种形式：
+```
+from flask import jsonify 
+@app.route('/foo') 
+def foo(): 
+	return jsonify(name='Grey Li', gender='male')
+```
+或者传入字典：
+```
+from flask import jsonify 
+@app.route('/foo') 
+def foo(): 
+	return jsonify({name: 'Grey Li', gender: 'male'})
+```
+返回值还可以加个错误码：
+```
+@app.route('/foo') 
+def foo(): 
+	return jsonify(message='Error!'), 500
+```

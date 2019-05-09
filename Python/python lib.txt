@@ -3,3 +3,9 @@ passlib  密码散列库   文档：https://passlib.readthedocs.io/en/stable/ind
 psycopg2  Psycopg是PostgreSQL数据库适配器
 
 flask  一个轻量级的WSGI web应用程序框架。
+
+pyinstaller 打包成exe
+
+pickle  用于序列化和反序列化Python对象结构的二进制协议
+
+pyyaml  YAML解析器和发射器。
