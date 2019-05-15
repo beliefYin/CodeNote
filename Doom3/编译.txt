@@ -1,0 +1,25 @@
+准备：
+1. Microsoft Visual Studio 2010 旗舰版 + SP1
+2. Microsoft DirectX SDK (June 2010)
+3. Doom3游戏资源（游戏目录下的base目录）
+
+
+1.LINK : fatal error LNK1123: 转换到 COFF 期间失败: 文件无效或损坏
+1-1.重命名或删除：（vs2010安装的位置）C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cvtres.exe
+这样C:\Windows\Microsoft.NET\Framework\v4.0.30319 (.NET 4.5)中的cvtres.exe文件就可以被VS2010使用。
+1-2.DoomDLL项目属性中Configuration Properties->Manifest Tool->Input and Output->Embed Manifest设置为No
+
+2.把游戏的base目录下文件拷贝到源码base目录下
+
+3. 修改neo/sys/win32/win_input.cpp中的字符 '?  -> '?'
+应该是文件编码问题，不过由于那几个国家的Input接口用不着，所以直接这么改没问题。
+
+4.真正能运行的版本是Debug和Release
+
+5. 跳过CDKEY检测
+修改neo/framework/Session.cpp
+找到bool idSessionLocal::CDKeysAreValid( bool strict )
+设置cdkey_state = CDKEY_OK
+
+6.DoomDLL项目属性中Configuration Properties->Debugging->Command Arguments里的fs_basepath填源码目录，+set fs_basepath "E:\code\other_sourcecode\doom" +set com_allowConsole 1 +set si_pure 0
+

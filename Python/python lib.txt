@@ -9,3 +9,5 @@ pyinstaller 打包成exe
 pickle  用于序列化和反序列化Python对象结构的二进制协议
 
 pyyaml  YAML解析器和发射器。
+
+python-docx  word文档
