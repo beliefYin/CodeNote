@@ -11,3 +11,9 @@ pickle  用于序列化和反序列化Python对象结构的二进制协议
 pyyaml  YAML解析器和发射器。
 
 python-docx  word文档
+
+docxtpl  使用docx作为jinja2模板
+
+pandoc  通用文档转换器(要在命令行下使用),他可以把许多如今存在的文档格式转换问另一种文档格式，如html、markdown、docbook、latex、docx等转换为xml、latex、markdown、pdf
+
+subprocess 运行系统命令
