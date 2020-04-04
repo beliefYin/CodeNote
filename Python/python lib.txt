@@ -13,3 +13,8 @@ pyyaml  YAML解析器和发射器。
 python-docx  word文档
 
 pillow  Python Imaging Library.Pillow is the friendly PIL fork by Alex Clark and Contributors. PIL is the Python Imaging Library by Fredrik Lundh and Contributors.
+docxtpl  使用docx作为jinja2模板
+
+pandoc  通用文档转换器(要在命令行下使用),他可以把许多如今存在的文档格式转换问另一种文档格式，如html、markdown、docbook、latex、docx等转换为xml、latex、markdown、pdf
+
+subprocess 运行系统命令
