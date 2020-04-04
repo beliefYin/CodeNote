@@ -11,3 +11,5 @@ pickle  用于序列化和反序列化Python对象结构的二进制协议
 pyyaml  YAML解析器和发射器。
 
 python-docx  word文档
+
+pillow  Python Imaging Library.Pillow is the friendly PIL fork by Alex Clark and Contributors. PIL is the Python Imaging Library by Fredrik Lundh and Contributors.
